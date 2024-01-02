@@ -8,6 +8,8 @@ rust-version = "1.71"
 
 [profile.release]
 opt-level = "s"
+strip = true
+lto = true
 
 [profile.dev]
 debug = true    # Symbols are nice and they don't increase the size on Flash
@@ -29,12 +31,17 @@ embassy = [
 
 [dependencies]
 log = { version = "0.4", default-features = false }
-esp-idf-svc = { version = "0.47.3", default-features = false }
 esp-idf-hal = "0.42.5"
+esp-idf-svc = { version = "0.47.3", features = ["std", "experimental"] }
+esp-idf-sys = { version = "0.33.7", features = ["binstart"] }
 ssd1306 = "0.8.4"
 anyhow = "1.0.77"
 embedded-graphics = "0.8.1"
-tinyqoi = "0.2.0"
+rand = "0.8.5"
+textwrap = "0.16.0"
 
 [build-dependencies]
 embuild = "0.31.3"
+
+[package.metadata.espflash]
+partition_table = "partitions.csv" # Supports CSV and binary formats

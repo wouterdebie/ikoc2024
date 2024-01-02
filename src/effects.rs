@@ -11,15 +11,19 @@ use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyleBuilder, Rectangle};
 use embedded_graphics::text::{Alignment, Baseline, LineHeight, Text, TextStyleBuilder};
 
+const MAX_LINES: usize = 3;
+
 pub fn blink<D>(
     display: &mut Display,
     d: &mut D,
     times: u32,
     duration: Duration,
+    keep: bool,
 ) -> Result<(), Error>
 where
     D: Drawable<Color = embedded_graphics::pixelcolor::BinaryColor>,
 {
+    display.clear(BinaryColor::Off).unwrap();
     for _ in 0..times {
         d.draw(display).unwrap();
         display.flush().unwrap();
@@ -27,6 +31,10 @@ where
         display.clear(BinaryColor::Off).unwrap();
         display.flush().unwrap();
         std::thread::sleep(duration);
+    }
+    if keep {
+        d.draw(display).unwrap();
+        display.flush().unwrap();
     }
     Ok(())
 }
@@ -40,27 +48,32 @@ pub fn type_text(display: &mut Display, s: &str) -> Result<(), Error> {
         .baseline(Baseline::Top)
         .build();
 
+    let s = textwrap::fill(s, 25);
+
     let mut out = "".to_string();
     let mut lines = 0;
-    for (i, c) in s.chars().enumerate() {
-        // End of the line
-        if i > 0 && i % 25 == 0 {
-            out.push('\n');
-            lines += 1;
-            // Move up when there more than 3 lines and every consecutive line
-            if lines > 2 {
-                let mut split = out.splitn(2, '\n');
-                split.next();
-                out = split.next().unwrap().to_string();
-                // clear display
-                display.clear(BinaryColor::Off).unwrap();
-            }
-        }
+
+    for c in s.chars() {
         out.push(c);
+
+        if c == '\n' {
+            lines += 1;
+        }
+
+        // Move up when there more than MAX_LINES lines
+        if out.ends_with('\n') && lines > MAX_LINES {
+            let mut split = out.splitn(2, '\n');
+            split.next();
+            out = split.next().unwrap().to_string();
+            // clear display
+            display.clear(BinaryColor::Off).unwrap();
+        }
+
         let text = Text::with_text_style(&out, Point::new(0, 0), character_style, text_style);
 
         text.draw(display).unwrap();
         display.flush().unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(70));
     }
 
     Ok(())
@@ -111,6 +124,9 @@ where
 
         // Write the display buffer to the display
         display.flush().unwrap();
+
+        // Sleep 40ms
+        std::thread::sleep(std::time::Duration::from_millis(40));
     }
     Ok(())
 }

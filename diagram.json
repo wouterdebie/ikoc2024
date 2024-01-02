@@ -6,8 +6,8 @@
     {
       "type": "board-esp32-devkit-c-v4",
       "id": "esp",
-      "top": 0.59,
-      "left": 0.67,
+      "top": 0,
+      "left": 4.84,
       "attrs": { "flashSize": "16" }
     },
     {
@@ -23,8 +23,8 @@
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "esp:GND.2", "oled1:GND", "black", [ "v0" ] ],
     [ "esp:3V3", "oled1:VCC", "red", [ "h0" ] ],
-    [ "oled1:SCL", "esp:22", "green", [ "v0" ] ],
-    [ "oled1:SDA", "esp:21", "green", [ "v0" ] ]
+    [ "esp:4", "oled1:SCL", "green", [ "h0" ] ],
+    [ "oled1:SDA", "esp:0", "green", [ "v0" ] ]
   ],
   "serialMonitor": { "display": "terminal", "convertEol": true },
   "dependencies": {}
