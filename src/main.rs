@@ -4,6 +4,7 @@ use embedded_graphics::mono_font::{ascii::FONT_5X7, MonoTextStyle};
 use embedded_graphics::pixelcolor::*;
 use embedded_graphics::prelude::*;
 use embedded_graphics::text::{Alignment, Baseline, LineHeight, Text, TextStyleBuilder};
+use esp_idf_hal::gpio::PinDriver;
 use esp_idf_hal::sys::esp;
 use esp_idf_svc::espnow::{EspNow, PeerInfo, BROADCAST};
 use esp_idf_svc::eventloop::EspSystemEventLoop;
@@ -31,6 +32,8 @@ const DEVICE_ID: &str = env!("DEVICE_ID");
 const SCREEN_WIDTH: u32 = 128;
 const SCREEN_HEIGHT: u32 = 32;
 const ESP_NOW_CHANNEL: u8 = 1;
+
+const SEND_DELAY_RANGE: std::ops::Range<u64> = 5..20;
 
 const POETRY: &[u8; 18827] = include_bytes!("../assets/poetry.txt");
 const ASCII_CHEWIE: &[u8; 2806] = include_bytes!("../assets/chewie.txt");
@@ -70,12 +73,15 @@ fn main() -> Result<()> {
     log::info!("Device ID: {}/42", DEVICE_ID);
 
     let peripherals = Peripherals::take().unwrap();
-    let pins = peripherals.pins;
+    let led = peripherals.pins.gpio22;
+    let sda = peripherals.pins.gpio0;
+    let scl = peripherals.pins.gpio4;
+
     let di = ssd1306::I2CDisplayInterface::new(
         i2c::I2cDriver::new(
             peripherals.i2c0,
-            pins.gpio0,
-            pins.gpio4,
+            sda,
+            scl,
             &i2c::I2cConfig::new().baudrate(1000.kHz().into()),
         )
         .unwrap(),
@@ -108,9 +114,12 @@ fn main() -> Result<()> {
 
             let mut image = Image::new(&logotype, Point::new(0, 0));
 
-            effects::up_in(&mut display, &mut image).unwrap();
-            std::thread::sleep(std::time::Duration::from_secs(2));
-            effects::up_out(&mut display, &mut image).unwrap();
+            // Show logo 3 times
+            for _ in 0..3 {
+                effects::up_in(&mut display, &mut image).unwrap();
+                // std::thread::sleep(std::time::Duration::from_secs(1));
+                effects::up_out(&mut display, &mut image).unwrap();
+            }
 
             display.clear(BinaryColor::Off).unwrap();
             let character_style = MonoTextStyle::new(&FONT_5X7, BinaryColor::On);
@@ -275,8 +284,12 @@ fn main() -> Result<()> {
         .spawn(move || {
             let rng = &mut rand::thread_rng();
 
+            let mut led = PinDriver::output(led).unwrap();
+            led.set_high().unwrap();
             loop {
-                std::thread::sleep(std::time::Duration::from_secs(rng.gen_range(5..20)));
+                std::thread::sleep(std::time::Duration::from_secs(
+                    rng.gen_range(SEND_DELAY_RANGE),
+                ));
 
                 let poem_id = rng.gen_range(0..poems_len) as u8;
                 let device_id: u8 = DEVICE_ID.parse().unwrap();
@@ -287,6 +300,14 @@ fn main() -> Result<()> {
                 log::info!("Broadcast poem {} from {}", poem_id, DEVICE_ID);
                 let mut s = sent.lock().unwrap();
                 *s += 1;
+
+                // Blink gpio 21 three times
+                for _ in 0..3 {
+                    led.set_low().unwrap();
+                    std::thread::sleep(std::time::Duration::from_millis(200));
+                    led.set_high().unwrap();
+                    std::thread::sleep(std::time::Duration::from_millis(200));
+                }
             }
         })?;
     send_thread.join().unwrap();
