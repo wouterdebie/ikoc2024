@@ -144,7 +144,7 @@ fn main() -> Result<()> {
             std::thread::sleep(std::time::Duration::from_secs(4));
 
             let mut boot_text = Text::with_text_style(
-                "Vogon Poetry Transceiver\nVersion: 1.0\nBooting..",
+                "Vogon Poetry Transceiver\nVersion: 0x42\nBooting..",
                 Point::new(0, 0),
                 character_style,
                 text_style,
