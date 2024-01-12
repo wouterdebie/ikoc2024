@@ -28,7 +28,7 @@ mod effects;
 mod utils;
 
 const DEVICE_ID: &str = env!("DEVICE_ID");
-
+const TOTAL_DEVICES: u8 = 42;
 const SCREEN_WIDTH: u32 = 128;
 const SCREEN_HEIGHT: u32 = 32;
 const ESP_NOW_CHANNEL: u8 = 1;
@@ -70,7 +70,7 @@ fn main() -> Result<()> {
     log::info!("Chewbacchus 2023 - Vogon Poetry Transceiver");
     log::info!("by: Wouter de Bie - wouter@evenflow.nl");
     log::info!("Number of poems: {}", poems.len());
-    log::info!("Device ID: {}/42", DEVICE_ID);
+    log::info!("Device ID: {}/{}", DEVICE_ID, TOTAL_DEVICES);
 
     let peripherals = Peripherals::take().unwrap();
     let led = peripherals.pins.gpio22;
@@ -169,8 +169,9 @@ fn main() -> Result<()> {
             loop {
                 display.clear(BinaryColor::Off).unwrap();
                 let wait = format!(
-                    "Device {}/42\nWaiting for Poetry..\nReceived: {}, sent: {}",
+                    "Device {}/{}\nWaiting for Poetry..\nReceived: {}, sent: {}",
                     DEVICE_ID,
+                    TOTAL_DEVICES,
                     display_received.lock().unwrap(),
                     display_sent.lock().unwrap()
                 );
@@ -182,7 +183,7 @@ fn main() -> Result<()> {
                 display.flush().unwrap();
 
                 // Sleep 2 second
-                std::thread::sleep(std::time::Duration::from_secs(2));
+                std::thread::sleep(std::time::Duration::from_secs(4));
 
                 // Wait for messages, but timeout after 1 second
                 let msg = rx.recv_timeout(std::time::Duration::from_secs(1));
@@ -194,7 +195,7 @@ fn main() -> Result<()> {
                         poem,
                         &mut display,
                         &poems,
-                        format!("Received from: {}/42\n", src).as_str(),
+                        format!("Received from: {}/{}\n", src, TOTAL_DEVICES).as_str(),
                     );
                 }
                 // duration since last message
