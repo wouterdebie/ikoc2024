@@ -22,6 +22,9 @@ the sent poem as soon as they receive them.
 
 If a device hasn't received a poem in 10 seconds, it will pick a random poem.
 
+## Hardware
+For the project I used an [AITIP ESP32 Lite v1.0.0](https://www.amazon.com/gp/product/B0BCJT8KDX/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) and a [Makerfocus SSD1306 OLED Display](https://www.amazon.com/gp/product/B08LQM9PQQ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1). I connected pin 0 to SDA and pin 4 to SCL.
+
 ## Thanks
 
 - Intergalactic Krewe of Chewbacchus for organizing the parade. And their Overlords for awarding me with the best throw award.
