@@ -1,7 +1,7 @@
 # Chewbacchus 2024 Throw
 
 ## Description
-This is the code for throws I made for the Chewbaccus 2024 parade. It's a
+This is the code for throws I made for the [Chewbaccus](https://chewbacchus.org) 2024 parade. It's a
 Vogon Poetry transceiver that sends and receives poetry from and to other
 devices. It's based on an esp32 board and uses an SSd1306 OLED display. This project is written
 in Rust and uses the esp-idf framework.
