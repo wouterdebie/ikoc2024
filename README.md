@@ -6,7 +6,9 @@ Vogon Poetry transceiver that sends and receives poetry from and to other
 devices. It's based on an esp32 board and uses an SSd1306 OLED display. This project is written
 in Rust and uses the esp-idf framework.
 
-Demo: https://photos.app.goo.gl/udVBA6jNoyL7UNUZA
+![cbthrow](https://github.com/wouterdebie/ikoc2024/assets/172038/ec69a8aa-b6db-4276-a31a-f31c9ef76d36)
+
+[Demo](https://photos.app.goo.gl/udVBA6jNoyL7UNUZA)
 
 ## Building and installing
 Installing and running: `DEVICE_ID=1 cargo run --release -- -p /dev/cu.usbserial-1410 -b 256000`.
