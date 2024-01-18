@@ -84,14 +84,23 @@
     </p>
     <h3>The battery is dead, what do I do?</h3>
     <p>
-      There is a micro USB port on the micro controller. Carefully remove the micro controller from the tin can. It's attached using double sided tape, but it might be stuck a bit. Plug it in a USB cable
-      (like the one you use to charge your phone), set the switch on the front
-      to ON and it will charge. A bright blue LED should light up. When the blue light starts to flicker, the battery should be charged.
+      There is a micro USB port on the micro controller. Carefully remove the
+      micro controller from the tin can. It's attached using double sided tape,
+      but it might be stuck a bit. Plug it in a USB cable (like the one you use
+      to charge your phone), set the switch on the front to ON and it will
+      charge. A bright blue LED should light up. When the blue light starts to
+      flicker, the battery should be charged.
     </p>
     <h3>
       I only see a sliver of the the Chewbacchus logo. Is the device dead?
     </h3>
-    <p>It probably needs to be recharged.</p>
+    <p>
+      It probably needs to be recharged. I didn't implement battery monitoring,
+      but I've seen that the device will restart when the battery is too low
+      when turning on the radios for wireless communication. Since the radios
+      turn on after the display starts displaying the logo, it will show a part
+      of the logo before resetting.
+    </p>
     <h3>Can you share the code?</h3>
     <p>
       Sure!
